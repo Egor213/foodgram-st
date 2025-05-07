@@ -25,7 +25,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "corsheaders",
-    "ingredients",
+    "djoser",
+    "django.contib.IngredientConfig",
 ]
 
 MIDDLEWARE = [
@@ -95,6 +96,20 @@ USE_I18N = True
 
 USE_TZ = True
 
-STATIC_URL = "/static/"
+STATIC_URL = "/static_backend/"
+STATIC_ROOT = BASE_DIR / "static_backend"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_URL = "/media_backend/"
+MEDIA_ROOT = BASE_DIR / "media_backend"
+
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
