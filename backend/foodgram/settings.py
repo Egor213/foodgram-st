@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "djoser",
     "ingredients.apps.IngredientConfig",
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -115,6 +116,8 @@ REST_FRAMEWORK = {
     ],
 }
 
+AUTH_USER_MODEL = "users.CustomUser"
+
 
 DJOSER = {
     "LOGIN_FIELD": "email",
@@ -126,3 +129,5 @@ DJOSER = {
         # "current_user": "users.serializers.FoodgramUserSerializer",
     },
 }
+
+UPLOAD_AVATAR = "users/images/"
