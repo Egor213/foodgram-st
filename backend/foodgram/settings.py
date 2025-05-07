@@ -109,7 +109,7 @@ MEDIA_ROOT = BASE_DIR / "media_backend"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
@@ -125,8 +125,8 @@ DJOSER = {
     "USER_CREATE_PASSWORD_RETYPE": False,
     "SERIALIZERS": {
         "user_create": "api.users.serializers.CustomCreateUserSerializer",
-        # "user": "users.serializers.FoodgramUserSerializer",
-        # "current_user": "users.serializers.FoodgramUserSerializer",
+        "user": "api.users.serializers.CustomCreateUserSerializer",
+        "current_user": "api.users.serializers.CustomCreateUserSerializer",
     },
 }
 
