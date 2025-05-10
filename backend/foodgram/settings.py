@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "ingredients.apps.IngredientConfig",
     "users.apps.UsersConfig",
     "recipes.apps.RecipesConfig",
+    "short_urls.apps.ShortUrlsConfig",
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,7 @@ DJOSER = {
 
 UPLOAD_AVATAR = "users/images/"
 UPLOAD_RECIPES = "recipes/images/"
+CHARACTERS_SHORT_URL = (
+    "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz234567890"
+)
+TOKEN_LENGTH_SHORT_URL = 3

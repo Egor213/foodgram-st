@@ -116,7 +116,7 @@ class ShoopingCart(models.Model):
     )
 
     class Meta:
-        default_related_name = "shopping_carts"
+        default_related_name = "shopping_cart"
         verbose_name = "Рецепт в корзине"
         verbose_name_plural = "Рецепты в корзине"
 
