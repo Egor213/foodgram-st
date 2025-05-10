@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "corsheaders",
     "djoser",
+    "django_filters",
     # Registered entities
     "ingredients.apps.IngredientConfig",
     "users.apps.UsersConfig",
