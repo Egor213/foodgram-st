@@ -102,10 +102,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         ingredients_data = validated_data.pop("ingredient_recipes", None)
-        if ingredients_data is None:
-            raise serializers.ValidationError(
-                "Ингредиенты должны быть указаны."
-            )
         recipe = Recipe.objects.create(
             author=self.context["request"].user, **validated_data
         )
@@ -114,10 +110,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         ingredients_data = validated_data.pop("ingredient_recipes", None)
-        if ingredients_data is None:
-            raise serializers.ValidationError(
-                "Ингредиенты должны быть указаны."
-            )
         instance.ingredients.clear()
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
