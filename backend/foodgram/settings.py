@@ -117,6 +117,8 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
+    "DEFAULT_PAGINATION_CLASS": "core.pagination.CustomPagePaginator",
+    "PAGE_SIZE": 10,
 }
 
 AUTH_USER_MODEL = "users.CustomUser"
@@ -128,8 +130,23 @@ DJOSER = {
     "USER_CREATE_PASSWORD_RETYPE": False,
     "SERIALIZERS": {
         "user_create": "api.users.serializers.CustomCreateUserSerializer",
-        "user": "api.users.serializers.CustomCreateUserSerializer",
+        "user": "api.users.serializers.CustomUserSerializer",
         "current_user": "api.users.serializers.CustomCreateUserSerializer",
+    },
+    "PERMISSIONS": {
+        "activation": ["rest_framework.permissions.AllowAny"],
+        "password_reset_confirm": ["rest_framework.permissions.AllowAny"],
+        "set_password": ["djoser.permissions.CurrentUserOrAdmin"],
+        "username_reset": ["rest_framework.permissions.AllowAny"],
+        "username_reset_confirm": ["rest_framework.permissions.AllowAny"],
+        "set_username": ["djoser.permissions.CurrentUserOrAdmin"],
+        "user_create": ["rest_framework.permissions.AllowAny"],
+        "user_delete": ["djoser.permissions.CurrentUserOrAdmin"],
+        "user": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+        "me": ["djoser.permissions.CurrentUserOrAdmin"],
+        "user_list": ["rest_framework.permissions.AllowAny"],
+        "token_create": ["rest_framework.permissions.AllowAny"],
+        "token_destroy": ["rest_framework.permissions.IsAuthenticated"],
     },
 }
 
