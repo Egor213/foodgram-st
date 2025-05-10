@@ -5,6 +5,7 @@ from djoser.serializers import (
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from core.serializers import AvatarSerializer
+from recipes.models import Recipe
 
 User = get_user_model()
 
@@ -45,3 +46,33 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
         if current_user.is_anonymous:
             return False
         return current_user.followers.filter(author=author).exists()
+
+
+class SubscribeAuthorSerializer(CustomUserSerializer):
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta(CustomUserSerializer.Meta):
+        fields = (
+            "email",
+            "id",
+            "username",
+            "first_name",
+            "last_name",
+            "is_subscribed",
+            "recipes",
+            "recipes_count",
+            "avatar",
+        )
+
+    def get_recipes(self, obj):
+        from api.recipes.serializers import ShortRecipeSerializer
+
+        recipes = obj.recipes.all()
+        request = self.context.get("request")
+        return ShortRecipeSerializer(
+            recipes, many=True, context={"request": request}
+        ).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.all().count()

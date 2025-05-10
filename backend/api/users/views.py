@@ -1,9 +1,16 @@
 from djoser.views import UserViewSet
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import AvatarSerializer
+from users.models import Subscription
+from django.contrib.auth import get_user_model
+
+from .serializers import SubscribeAuthorSerializer
+
+User = get_user_model()
 
 
 class CustomUserViewSet(UserViewSet):
@@ -12,7 +19,6 @@ class CustomUserViewSet(UserViewSet):
         detail=False,
         permission_classes=(IsAuthenticated,),
         url_path="me/avatar",
-        url_name="me-avatar",
     )
     def avatar(self, request):
         data = request.data
@@ -36,7 +42,31 @@ class CustomUserViewSet(UserViewSet):
         methods=("GET",),
         detail=False,
         permission_classes=(IsAuthenticated,),
-        url_name="me",
+        url_path="me",
     )
     def me(self, request, *args, **kwargs):
         return super().me(request, *args, **kwargs)
+
+    @action(
+        methods=("GET",),
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+        url_path="subscriptions",
+    )
+    def subscriptions(self, request):
+        authors = User.objects.filter(followings__user=request.user)
+        page = self.paginate_queryset(authors)
+        serializer = SubscribeAuthorSerializer(
+            page, many=True, context={"request": request}
+        )
+        return self.get_paginated_response(serializer.data)
+
+    # @action(
+    #     methods=("POST",),
+    #     detail=True,
+    #     permission_classes=(IsAuthenticated,),
+    #     url_path="subscribe",
+    # )
+    # def subscribe(self, request, id):
+    #     print(id)
+    #     return Response()

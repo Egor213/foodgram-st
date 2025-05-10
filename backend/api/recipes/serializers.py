@@ -116,3 +116,9 @@ class RecipeSerializer(serializers.ModelSerializer):
         instance.save()
         self._save_ingredients(instance, ingredients_data)
         return instance
+
+
+class ShortRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ("id", "name", "image", "cooking_time")
