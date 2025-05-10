@@ -22,14 +22,18 @@ class ShortUrl(models.Model):
     def save(self, *args, **kwargs):
         if not self.short_url:
             while True:
-                self.short_url = "".join(
+                token = "".join(
                     random.choices(
                         settings.CHARACTERS_SHORT_URL,
                         k=settings.TOKEN_LENGTH_SHORT_URL,
                     )
                 )
+                self.short_url = f"/s/{token}/"
                 if not ShortUrl.objects.filter(
                     short_url=self.short_url
                 ).exists():
                     break
         super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.short_url
