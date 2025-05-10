@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from core.serializers import AvatarSerializer
 from rest_framework.validators import UniqueTogetherValidator
+from users.models import Subscription
 
 User = get_user_model()
 
@@ -49,7 +50,7 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
         return current_user.followers.filter(author=author).exists()
 
 
-class SubscribeAuthorSerializer(CustomUserSerializer):
+class CreateSubscribeSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
@@ -77,3 +78,28 @@ class SubscribeAuthorSerializer(CustomUserSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.all().count()
+
+
+class SubscribtionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = ("author", "user")
+        validators = [
+            UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=("author", "user"),
+                message="Вы уже подписаны на этого пользователя",
+            )
+        ]
+
+    def validate_author(self, author):
+        if self.context["request"].user == author:
+            raise serializers.ValidationError(
+                "Нельзя подписаться на самого себя"
+            )
+        return author
+
+    def to_representation(self, instance):
+        return CreateSubscribeSerializer(
+            instance.author, context=self.context
+        ).data

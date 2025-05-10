@@ -9,7 +9,7 @@ from .serializers import AvatarSerializer
 from users.models import Subscription
 from django.contrib.auth import get_user_model
 
-from .serializers import SubscribeAuthorSerializer
+from .serializers import CreateSubscribeSerializer, SubscribtionSerializer
 
 User = get_user_model()
 
@@ -57,7 +57,7 @@ class CustomUserViewSet(UserViewSet):
     def subscriptions(self, request):
         authors = User.objects.filter(followings__user=request.user)
         page = self.paginate_queryset(authors)
-        serializer = SubscribeAuthorSerializer(
+        serializer = CreateSubscribeSerializer(
             page, many=True, context={"request": request}
         )
         return self.get_paginated_response(serializer.data)
@@ -70,19 +70,10 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, id):
         author = self.get_object()
-        try:
-            Subscription.objects.create(user=request.user, author=author)
-        except ValidationError:
-            return Response(
-                {"detail": "Нельзя подписать на самого себя"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except IntegrityError:
-            return Response(
-                {"detail": "Вы уже подписаны на этого пользователя."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = SubscribeAuthorSerializer(
-            author, context={"request": request}
+        serializer = SubscribtionSerializer(
+            data={"author": author.id, "user": request.user.id},
+            context={"request": request},
         )
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
