@@ -5,4 +5,4 @@ from .models import CustomUser
 @admin.register(CustomUser)
 class CustomUserAdmin(admin.ModelAdmin):
     search_fields = ("username", "email")
-    search_help_text = "Поиск по username или email"
+    search_help_text = "Поиск по нику или электронной почте"

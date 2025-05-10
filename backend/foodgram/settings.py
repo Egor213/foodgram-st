@@ -9,7 +9,7 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", get_random_secret_key())
 
-DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
+DEBUG = os.getenv("DJANGO_DEBUG", "false").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
 
@@ -23,12 +23,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Installed dependencies
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
     "djoser",
+    # Registered entities
     "ingredients.apps.IngredientConfig",
     "users.apps.UsersConfig",
+    "recipes.apps.RecipesConfig",
 ]
 
 MIDDLEWARE = [
@@ -99,7 +102,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "/static_backend/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'static_backend')
+STATIC_ROOT = os.path.join(BASE_DIR, "static_backend")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -131,3 +134,4 @@ DJOSER = {
 }
 
 UPLOAD_AVATAR = "users/images/"
+UPLOAD_RECIPES = "recipes/images/"
