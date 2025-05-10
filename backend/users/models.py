@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 
 
 class CustomUser(AbstractUser):
@@ -43,3 +44,35 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
+
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        verbose_name="Пользователь",
+        to=CustomUser,
+        on_delete=models.CASCADE,
+        related_name="followers",
+    )
+    author = models.ForeignKey(
+        verbose_name="Отслеживаемый автор",
+        to=CustomUser,
+        on_delete=models.CASCADE,
+        related_name="followings",
+    )
+
+    class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=("user", "author"), name="unique_following"
+            ),
+        )
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+
+    def clean(self):
+        if self.user == self.author:
+            raise ValidationError("Нельзя подписаться на самого себя.")
+        return super().clean()
+
+    def __str__(self):
+        return f"{self.user}"
