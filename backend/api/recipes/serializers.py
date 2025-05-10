@@ -49,16 +49,18 @@ class RecipeSerializer(serializers.ModelSerializer):
                 "Укажите хотя бы один ингредиент."
             )
 
-        ingredient_ids = [item["ingredient"]["id"] for item in ingredients]
+        ingredient_ids = [
+            ingredient["ingredient"]["id"] for ingredient in ingredients
+        ]
         if len(ingredient_ids) != len(set(ingredient_ids)):
             raise serializers.ValidationError(
                 "Ингредиенты не должны повторяться."
             )
 
         missing_ids = [
-            pk
-            for pk in ingredient_ids
-            if not Ingredient.objects.filter(id=pk).exists()
+            ingredient_id
+            for ingredient_id in ingredient_ids
+            if not Ingredient.objects.filter(id=ingredient_id).exists()
         ]
         if missing_ids:
             raise serializers.ValidationError(
@@ -68,7 +70,6 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe):
         current_user = self.context.get("request").user
-        print(current_user)
         if current_user.is_anonymous:
             return False
         return current_user.favorites.filter(recipe=recipe).exists()
