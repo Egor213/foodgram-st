@@ -131,7 +131,7 @@ DJOSER = {
     "SERIALIZERS": {
         "user_create": "api.users.serializers.CustomCreateUserSerializer",
         "user": "api.users.serializers.CustomUserSerializer",
-        "current_user": "api.users.serializers.CustomCreateUserSerializer",
+        "current_user": "api.users.serializers.CustomUserSerializer",
     },
     "PERMISSIONS": {
         "activation": ["rest_framework.permissions.AllowAny"],
@@ -143,7 +143,6 @@ DJOSER = {
         "user_create": ["rest_framework.permissions.AllowAny"],
         "user_delete": ["djoser.permissions.CurrentUserOrAdmin"],
         "user": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
-        "me": ["djoser.permissions.CurrentUserOrAdmin"],
         "user_list": ["rest_framework.permissions.AllowAny"],
         "token_create": ["rest_framework.permissions.AllowAny"],
         "token_destroy": ["rest_framework.permissions.IsAuthenticated"],

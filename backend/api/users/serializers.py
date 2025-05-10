@@ -1,11 +1,20 @@
 from djoser.serializers import (
     UserCreateSerializer,
     UserSerializer,
-    serializers,
 )
 from django.contrib.auth import get_user_model
+from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 
 User = get_user_model()
+
+
+class AvatarSerializer(serializers.ModelSerializer):
+    avatar = Base64ImageField(allow_null=True, required=False)
+
+    class Meta:
+        model = User
+        fields = ("avatar",)
 
 
 class CustomCreateUserSerializer(UserCreateSerializer):
@@ -23,7 +32,7 @@ class CustomCreateUserSerializer(UserCreateSerializer):
         write_only = ("password",)
 
 
-class CustomUserSerializer(UserSerializer):
+class CustomUserSerializer(AvatarSerializer, UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -35,8 +44,7 @@ class CustomUserSerializer(UserSerializer):
             "first_name",
             "last_name",
             "is_subscribed",
-            "avatar",
-        )
+        ) + AvatarSerializer.Meta.fields
         read_only = (
             "id",
             "is_subscribed",
