@@ -5,7 +5,7 @@ from djoser.serializers import (
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from core.serializers import AvatarSerializer
-from recipes.models import Recipe
+from rest_framework.validators import UniqueTogetherValidator
 
 User = get_user_model()
 
@@ -38,7 +38,8 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
             "first_name",
             "last_name",
             "is_subscribed",
-        ) + AvatarSerializer.Meta.fields
+            "avatar",
+        )
         read_only_fields = ("id", "is_subscribed")
 
     def get_is_subscribed(self, author):

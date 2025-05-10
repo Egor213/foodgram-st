@@ -1,5 +1,6 @@
 from djoser.views import UserViewSet
-from rest_framework import viewsets
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -61,12 +62,27 @@ class CustomUserViewSet(UserViewSet):
         )
         return self.get_paginated_response(serializer.data)
 
-    # @action(
-    #     methods=("POST",),
-    #     detail=True,
-    #     permission_classes=(IsAuthenticated,),
-    #     url_path="subscribe",
-    # )
-    # def subscribe(self, request, id):
-    #     print(id)
-    #     return Response()
+    @action(
+        methods=("POST",),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+        url_path="subscribe",
+    )
+    def subscribe(self, request, id):
+        author = self.get_object()
+        try:
+            Subscription.objects.create(user=request.user, author=author)
+        except ValidationError:
+            return Response(
+                {"detail": "Нельзя подписать на самого себя"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except IntegrityError:
+            return Response(
+                {"detail": "Вы уже подписаны на этого пользователя."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        serializer = SubscribeAuthorSerializer(
+            author, context={"request": request}
+        )
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
