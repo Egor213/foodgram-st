@@ -77,3 +77,12 @@ class CustomUserViewSet(UserViewSet):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @subscribe.mapping.delete
+    def unsubscribe(self, request, id):
+        subscription_deleted, _ = Subscription.objects.filter(
+            author=self.get_object(), user=request.user
+        ).delete()
+        if not subscription_deleted:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)

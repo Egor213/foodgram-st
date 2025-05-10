@@ -72,6 +72,10 @@ class CreateSubscribeSerializer(CustomUserSerializer):
 
         recipes = obj.recipes.all()
         request = self.context.get("request")
+        recipes_limit = int(
+            request.query_params.get("recipes_limit", len(recipes))
+        )
+        recipes = recipes[:recipes_limit]
         return ShortRecipeSerializer(
             recipes, many=True, context={"request": request}
         ).data
