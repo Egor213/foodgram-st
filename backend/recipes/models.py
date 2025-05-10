@@ -12,7 +12,7 @@ class Recipe(models.Model):
         verbose_name="Наименование рецепта", max_length=256, db_index=True
     )
     text = models.TextField(verbose_name="Описание")
-    cookie_time = models.PositiveSmallIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name="Время приготовления в минутах",
         validators=[
             MinValueValidator(
