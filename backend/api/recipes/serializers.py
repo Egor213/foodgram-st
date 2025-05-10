@@ -43,6 +43,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("is_favorited", "is_in_shopping_cart")
 
+    def validate_image(self, image):
+        if not image:
+            raise serializers.ValidationError("Изображение обязательно.")
+        return image
+
     def validate_ingredients(self, ingredients):
         if not ingredients:
             raise serializers.ValidationError(
