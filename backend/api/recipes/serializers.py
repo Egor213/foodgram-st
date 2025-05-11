@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.models import Recipe, IngredientRecipe
+from recipes.models import Recipe, IngredientRecipe, ShoopingCart
 from ingredients.models import Ingredient
 from api.users.serializers import CustomUserSerializer
 
@@ -122,3 +123,24 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ("id", "name", "image", "cooking_time")
+
+
+class ShoppingCartSeraializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoopingCart
+        fields = (
+            "recipe",
+            "user",
+        )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=model.objects.all(),
+                fields=("recipe", "user"),
+                message="Рецепт уже добавлен в корзину",
+            )
+        ]
+
+    def to_representation(self, instance):
+        return ShortRecipeSerializer(
+            instance.recipe, context=self.context
+        ).data

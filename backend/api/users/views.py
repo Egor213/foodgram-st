@@ -1,6 +1,4 @@
 from djoser.views import UserViewSet
-from django.core.exceptions import ValidationError
-from django.db import IntegrityError
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -69,9 +67,8 @@ class CustomUserViewSet(UserViewSet):
         url_path="subscribe",
     )
     def subscribe(self, request, id):
-        author = self.get_object()
         serializer = SubscribtionSerializer(
-            data={"author": author.id, "user": request.user.id},
+            data={"author": id, "user": request.user.id},
             context={"request": request},
         )
         if serializer.is_valid(raise_exception=True):

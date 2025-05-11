@@ -3,9 +3,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from core.permissons import IsAuthorOrReadOnlyPermisson
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 
-from recipes.models import Recipe
-from .serializers import RecipeSerializer
+
+from recipes.models import Recipe, ShoopingCart
+from .serializers import RecipeSerializer, ShoppingCartSeraializer
 from short_urls.models import ShortUrl
 
 
@@ -34,3 +38,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 )
             }
         )
+
+    @action(
+        methods=("POST",),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+        url_path="shopping_cart",
+    )
+    def shopping_cart(self, request, pk):
+        serializer = ShoppingCartSeraializer(
+            data={"recipe": pk, "user": request.user.id},
+            context={"request": request},
+        )
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @shopping_cart.mapping.delete
+    def delete_shopping_cart(self, request, pk=None):
+        shopping_cart_delete, _ = ShoopingCart.objects.filter(
+            recipe=pk, user=request.user
+        ).delete()
+        if not shopping_cart_delete:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)
