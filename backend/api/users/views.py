@@ -1,13 +1,18 @@
+from django.contrib.auth import get_user_model
 from djoser.views import UserViewSet
+from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
-from .serializers import AvatarSerializer
-from users.models import Subscription
-from django.contrib.auth import get_user_model
 
-from .serializers import CreateSubscribeSerializer, SubscribtionSerializer
+from users.models import Subscription
+
+from .serializers import (
+    AvatarSerializer,
+    CreateSubscribeSerializer,
+    SubscribtionSerializer,
+)
 
 User = get_user_model()
 
@@ -67,6 +72,7 @@ class CustomUserViewSet(UserViewSet):
         url_path="subscribe",
     )
     def subscribe(self, request, id):
+        get_object_or_404(User, pk=id)
         serializer = SubscribtionSerializer(
             data={"author": id, "user": request.user.id},
             context={"request": request},

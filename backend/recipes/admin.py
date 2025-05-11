@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Recipe, IngredientRecipe, FavoriteRecipe, ShoopingCart
+
+from .models import FavoriteRecipe, IngredientRecipe, Recipe, ShoopingCart
 
 
 class IngredientRecipeInline(admin.StackedInline):

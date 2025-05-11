@@ -1,11 +1,15 @@
-from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
+from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.models import Recipe, IngredientRecipe, ShoopingCart
-from ingredients.models import Ingredient
 from api.users.serializers import CustomUserSerializer
-
+from ingredients.models import Ingredient
+from recipes.models import (
+    FavoriteRecipe,
+    IngredientRecipe,
+    Recipe,
+    ShoopingCart,
+)
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
@@ -50,6 +54,14 @@ class RecipeSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Изображение обязательно.")
         return image
 
+    def validate(self, attrs):
+        ingredients = attrs.get("ingredient_recipes", [])
+        if not len(ingredients):
+            raise serializers.ValidationError(
+                "Должен быть указан хотя бы один ингредиент."
+            )
+        return super().validate(attrs)
+
     def validate_ingredients(self, ingredients):
         if not ingredients:
             raise serializers.ValidationError(
@@ -77,11 +89,13 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, recipe):
         from api.services import is_related
+
         user = self.context["request"].user
         return is_related(user, recipe, "favorites", "recipe")
 
     def get_is_in_shopping_cart(self, recipe):
         from api.services import is_related
+
         user = self.context["request"].user
         return is_related(user, recipe, "shopping_cart", "recipe")
 
@@ -124,18 +138,18 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "image", "cooking_time")
 
 
-class ShoppingCartSeraializer(serializers.ModelSerializer):
+class BaseShoppingFavoriteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ShoopingCart
-        fields = (
-            "recipe",
-            "user",
-        )
-        validators = [
+        fields = ("user", "recipe")
+        abstract = True
+
+    @classmethod
+    def build_validator(cls, model_class, message):
+        return [
             UniqueTogetherValidator(
-                queryset=model.objects.all(),
+                queryset=model_class.objects.all(),
                 fields=("recipe", "user"),
-                message="Рецепт уже добавлен в корзину",
+                message=message,
             )
         ]
 
@@ -143,3 +157,19 @@ class ShoppingCartSeraializer(serializers.ModelSerializer):
         return ShortRecipeSerializer(
             instance.recipe, context=self.context
         ).data
+
+
+class ShoppingCartSeraializer(BaseShoppingFavoriteSerializer):
+    class Meta(BaseShoppingFavoriteSerializer.Meta):
+        model = ShoopingCart
+        validators = BaseShoppingFavoriteSerializer.build_validator(
+            ShoopingCart, "Рецепт уже добавлен в корзину"
+        )
+
+
+class FavoriteRecipeSeraializer(BaseShoppingFavoriteSerializer):
+    class Meta(BaseShoppingFavoriteSerializer.Meta):
+        model = FavoriteRecipe
+        validators = BaseShoppingFavoriteSerializer.build_validator(
+            FavoriteRecipe, "Рецепт уже добавлен в избранное"
+        )

@@ -1,11 +1,9 @@
-from djoser.serializers import (
-    UserCreateSerializer,
-    UserSerializer,
-)
 from django.contrib.auth import get_user_model
+from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
-from core.serializers import AvatarSerializer
 from rest_framework.validators import UniqueTogetherValidator
+
+from core.serializers import AvatarSerializer
 from users.models import Subscription
 
 User = get_user_model()
@@ -45,6 +43,7 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
 
     def get_is_subscribed(self, author):
         from api.services import is_related
+
         user = self.context["request"].user
         return is_related(user, author, "followers", "author")
 

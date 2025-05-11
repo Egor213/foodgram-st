@@ -1,18 +1,26 @@
+from django.conf import settings
+from django.http import FileResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from core.permissons import IsAuthorOrReadOnlyPermisson
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from django.http import FileResponse
-from django.shortcuts import get_object_or_404
-from django.conf import settings
+from rest_framework.response import Response
 
-from api.services import generate_recipes_pdf
-from recipes.models import Recipe, ShoopingCart
-from .serializers import RecipeSerializer, ShoppingCartSeraializer
+from api.services import (
+    add_to_related_model,
+    delete_from_related_model,
+    generate_recipes_pdf,
+)
+from core.permissons import IsAuthorOrReadOnlyPermisson
+from recipes.models import FavoriteRecipe, Recipe, ShoopingCart
 from short_urls.models import ShortUrl
+
+from .filters import ProductFilter
+from .serializers import (
+    FavoriteRecipeSeraializer,
+    RecipeSerializer,
+    ShoppingCartSeraializer,
+)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -21,6 +29,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnlyPermisson,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("author",)
+    filterset_class = ProductFilter
 
     @action(
         methods=("GET",),
@@ -48,24 +57,24 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path="shopping_cart",
     )
     def shopping_cart(self, request, pk):
-        get_object_or_404(Recipe, pk=pk)
-        serializer = ShoppingCartSeraializer(
-            data={"recipe": pk, "user": request.user.id},
-            context={"request": request},
-        )
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return add_to_related_model(request, pk, ShoppingCartSeraializer)
 
     @shopping_cart.mapping.delete
-    def delete_shopping_cart(self, request, pk=None):
-        recipe = get_object_or_404(Recipe, pk=pk)
-        shopping_cart_delete, _ = ShoopingCart.objects.filter(
-            recipe=recipe, user=request.user
-        ).delete()
-        if not shopping_cart_delete:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    def delete_shopping_cart(self, request, pk):
+        return delete_from_related_model(request, pk, ShoopingCart)
+
+    @action(
+        methods=("POST",),
+        detail=True,
+        permission_classes=(IsAuthenticated,),
+        url_path="favorite",
+    )
+    def favorite_recipe(self, request, pk):
+        return add_to_related_model(request, pk, FavoriteRecipeSeraializer)
+
+    @favorite_recipe.mapping.delete
+    def delete_favorite_recipe(self, request, pk):
+        return delete_from_related_model(request, pk, FavoriteRecipe)
 
     @action(
         methods=("GET",),

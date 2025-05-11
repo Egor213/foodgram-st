@@ -1,9 +1,15 @@
-from recipes.models import ShoopingCart
-from .recipes.serializers import RecipeSerializer
-from io import BytesIO
-from fpdf import FPDF
-from django.conf import settings
 import os
+from io import BytesIO
+
+from django.conf import settings
+from fpdf import FPDF
+from rest_framework import status
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
+
+from recipes.models import Recipe, ShoopingCart
+
+from .recipes.serializers import RecipeSerializer
 
 
 def get_user_shopping_cart(user):
@@ -124,3 +130,24 @@ def is_related(user, obj, related_manager_name, lookup_field="recipe"):
     manager = getattr(user, related_manager_name)
     filter_kwargs = {lookup_field: obj}
     return manager.filter(**filter_kwargs).exists()
+
+
+def add_to_related_model(request, pk, serializer_class):
+    get_object_or_404(Recipe, pk=pk)
+    serializer = serializer_class(
+        data={"recipe": pk, "user": request.user.id},
+        context={"request": request},
+    )
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+def delete_from_related_model(request, pk, model_class):
+    recipe = get_object_or_404(Recipe, pk=pk)
+    deleted, _ = model_class.objects.filter(
+        recipe=recipe, user=request.user
+    ).delete()
+    if not deleted:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    return Response(status=status.HTTP_204_NO_CONTENT)

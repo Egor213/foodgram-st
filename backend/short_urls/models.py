@@ -1,6 +1,7 @@
-from django.db import models
-from django.conf import settings
 import random
+
+from django.conf import settings
+from django.db import models
 
 
 class ShortUrl(models.Model):
