@@ -38,7 +38,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_name="get-link",
     )
     def get_short_url(self, request, pk=None):
-        origin_url = f"/api/recipes/{pk}/"
+        origin_url = f"/recipes/{pk}/"
         short_url_instance, _ = ShortUrl.objects.get_or_create(
             origin_url=origin_url
         )
