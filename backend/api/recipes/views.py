@@ -5,9 +5,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from core.permissons import IsAuthorOrReadOnlyPermisson
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
-from django.shortcuts import get_object_or_404
+from django.http import FileResponse
+from django.conf import settings
 
-
+from .services import generate_recipes_pdf
 from recipes.models import Recipe, ShoopingCart
 from .serializers import RecipeSerializer, ShoppingCartSeraializer
 from short_urls.models import ShortUrl
@@ -62,3 +63,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if not shopping_cart_delete:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        methods=("GET",),
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+        url_path="download_shopping_cart",
+    )
+    def download_shopping_cart(self, request):
+        return FileResponse(
+            generate_recipes_pdf(request),
+            as_attachment=True,
+            filename=f"{settings.NAME_SHOPPING_CART_LIST_FILE}.pdf",
+        )

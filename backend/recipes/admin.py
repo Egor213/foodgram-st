@@ -2,6 +2,11 @@ from django.contrib import admin
 from .models import Recipe, IngredientRecipe, FavoriteRecipe, ShoopingCart
 
 
+class IngredientRecipeInline(admin.StackedInline):
+    model = IngredientRecipe
+    extra = 0
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ("name", "author", "created_at", "favorites_count")
@@ -12,6 +17,7 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     search_help_text = "Поиск по названию рецепта и автору"
     list_filter = ("created_at",)
+    inlines = (IngredientRecipeInline,)
 
     @admin.display(description="Добавлений в избранное")
     def favorites_count(self, obj):
