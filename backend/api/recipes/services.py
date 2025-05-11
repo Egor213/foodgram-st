@@ -18,12 +18,6 @@ def formated_recipes(request):
     return serializer.data
 
 
-from fpdf import FPDF
-from io import BytesIO
-import os
-from django.conf import settings
-
-
 class PDFBuilder:
     def __init__(self, data):
         self.data = data
@@ -41,46 +35,77 @@ class PDFBuilder:
         self.pdf.set_font("DejaVu", size=12)
 
     def build(self):
-        self.pdf.set_font("DejaVu", "B", 16)
-        self.pdf.cell(0, 10, "Список покупок", ln=True, align="C")
+        self._add_header("Список покупок", font_size=16, style="B", align="C")
         self.pdf.ln(10)
 
+        all_ingredients = []
+
         for recipe in self.data:
-            self._add_recipe(recipe)
+            self._add_recipe(recipe, all_ingredients)
             self.pdf.ln(10)
+
+        self._add_ingredient_list(all_ingredients)
 
         pdf_bytes = self.pdf.output(dest="S").encode(
             "latin-1", errors="ignore"
         )
-        pdf_buffer = BytesIO(pdf_bytes)
-        pdf_buffer.seek(0)
-        return pdf_buffer
+        return BytesIO(pdf_bytes)
 
-    def _add_recipe(self, recipe):
-        self.pdf.set_font("DejaVu", "B", 14)
-        self.pdf.cell(0, 10, f"Рецепт: {recipe['name']}", ln=True)
+    def _add_header(self, text, font_size=12, style="", align="L"):
+        self.pdf.set_font("DejaVu", style, font_size)
+        self.pdf.cell(0, 10, text, ln=True, align=align)
+        self.pdf.set_font("DejaVu", "", 12)
+
+    def _add_recipe(self, recipe, all_ingredients):
+        self._add_header(f"Рецепт: {recipe['name']}", font_size=14, style="B")
 
         author = recipe["author"]
-        self.pdf.set_font("DejaVu", "", 12)
-        self.pdf.cell(
-            0,
-            8,
-            f"Автор: {author['first_name']} {author['last_name']} ({author['username']})",
-            ln=True,
+        self._add_line(
+            (
+                f"Автор: {author['first_name']} "
+                f"{author['last_name']} ({author['username']})"
+            )
         )
-
-        self.pdf.cell(
-            0, 8, f"Время приготовления: {recipe['cooking_time']} мин", ln=True
-        )
+        self._add_line(f"Время приготовления: {recipe['cooking_time']} мин")
         self.pdf.multi_cell(0, 8, f"Описание: {recipe['text']}")
+        self.pdf.ln(5)
 
-        self.pdf.set_font("DejaVu", "B", 12)
-        self.pdf.cell(0, 8, "Ингредиенты:", ln=True)
-
-        self.pdf.set_font("DejaVu", "", 12)
+        self._add_header("Ингредиенты:", font_size=12, style="B")
         for ingredient in recipe["ingredients"]:
-            line = f"- {ingredient['name']} — {ingredient['amount']} {ingredient['measurement_unit']}"
-            self.pdf.cell(0, 8, line, ln=True)
+            line = self._format_ingredient(ingredient)
+            self._add_line(line)
+            all_ingredients.append(ingredient)
+
+    def _add_line(self, text):
+        self.pdf.cell(0, 8, text, ln=True)
+
+    def _format_ingredient(self, ingredient):
+        return (
+            f"- {ingredient['name']} "
+            f"— {ingredient['amount']} "
+            f"{ingredient['measurement_unit']}"
+        )
+
+    def _add_ingredient_list(self, all_ingredients):
+        self.pdf.ln(10)
+        self._add_header(
+            "Список всех ингредиентов для покупок:", font_size=14, style="B"
+        )
+
+        seen = set()
+        unique_lines = []
+        for ingredient in all_ingredients:
+            key = (
+                ingredient["name"],
+                ingredient["measurement_unit"],
+            )
+            if key not in seen:
+                seen.add(key)
+                line = self._format_ingredient(ingredient)
+                unique_lines.append(line)
+
+        for line in unique_lines:
+            self._add_line(line)
 
 
 def generate_recipes_pdf(request):
