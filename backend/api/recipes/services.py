@@ -112,3 +112,9 @@ def generate_recipes_pdf(request):
     recipes = formated_recipes(request)
     pdf_builder = PDFBuilder(recipes)
     return pdf_builder.build()
+
+
+def check_is_related(user, recipe, related_manager_name):
+    if user.is_anonymous:
+        return False
+    return getattr(user, related_manager_name).filter(recipe=recipe).exists()

@@ -6,6 +6,7 @@ from core.permissons import IsAuthorOrReadOnlyPermisson
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from django.http import FileResponse
+from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 from .services import generate_recipes_pdf
@@ -47,6 +48,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         url_path="shopping_cart",
     )
     def shopping_cart(self, request, pk):
+        get_object_or_404(Recipe, pk=pk)
         serializer = ShoppingCartSeraializer(
             data={"recipe": pk, "user": request.user.id},
             context={"request": request},
@@ -57,8 +59,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @shopping_cart.mapping.delete
     def delete_shopping_cart(self, request, pk=None):
+        recipe = get_object_or_404(Recipe, pk=pk)
         shopping_cart_delete, _ = ShoopingCart.objects.filter(
-            recipe=pk, user=request.user
+            recipe=recipe, user=request.user
         ).delete()
         if not shopping_cart_delete:
             return Response(status=status.HTTP_400_BAD_REQUEST)
