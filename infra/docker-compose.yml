@@ -1,5 +1,15 @@
 version: '3.3'
 services:
+  db:
+    container_name: foodgram-db
+    image: postgres:16.2-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
 
   frontend:
     container_name: foodgram-front
@@ -24,12 +34,15 @@ services:
     build:
       context: ../backend
       dockerfile: Dockerfile.backend
-    env_file: ../backend/.env
+    env_file: .env
     volumes:
       - static_files:/app/static_backend/
       - media_files:/app/media_backend/
+    depends_on:
+      - db
 
 
 volumes:
   static_files:
   media_files:
+  pg_data:
