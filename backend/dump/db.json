@@ -864,10 +864,10 @@
 },
 {
   "model": "authtoken.token",
-  "pk": "e0721145db22abfc3b8dbd68bac2630bae8a71c9",
+  "pk": "4c7857004a7507b0f4f10035d151309f1e545962",
   "fields": {
     "user": 3,
-    "created": "2025-05-11T12:37:47.366Z"
+    "created": "2025-05-11T12:51:58.980Z"
   }
 },
 {
@@ -998,7 +998,7 @@
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$1000000$3zbnD9x0vD37DKtKYzMzz4$aFz6JplAfEZ8EX9lqldmwnfpf0b9tpghNFClKoeB1lc=",
-    "last_login": "2025-05-11T12:30:34.243Z",
+    "last_login": "2025-05-11T12:50:51.475Z",
     "is_superuser": false,
     "is_staff": false,
     "is_active": true,
@@ -1007,7 +1007,7 @@
     "username": "Толян",
     "last_name": "Петрусенко",
     "first_name": "ТолькоТолька",
-    "avatar": "",
+    "avatar": "users/images/895c25cb-9a14-466d-a6ef-cd0d37810632.jpg",
     "groups": [],
     "user_permissions": []
   }
@@ -1017,7 +1017,7 @@
   "pk": 3,
   "fields": {
     "password": "pbkdf2_sha256$1000000$qgDV3g6iNvKZOEXqiaqtZW$9+Dwuul/ac3O8wK+XULMaf9GT8jyXLeRsCEQvwHYIu8=",
-    "last_login": "2025-05-11T12:37:47.369Z",
+    "last_login": "2025-05-11T12:51:58.983Z",
     "is_superuser": false,
     "is_staff": false,
     "is_active": true,
@@ -1065,7 +1065,7 @@
     "name": "Сырный суп с копчеными колбасками",
     "text": "Очень сытный и вкусный сырный суп с плавленым сыром. Готовится просто и довольно быстро. Добавьте в суп немного копченых колбасок или сосисок, так будет вкуснее и ароматней. Приятного аппетита!",
     "cooking_time": 45,
-    "image": "recipes/images/9586b5a4-2ab1-4754-8258-178f30668c40.jpg",
+    "image": "recipes/images/6d4bbf08-d942-4397-a29d-6660d32f47ac.jpg",
     "author": 2,
     "created_at": "2025-05-11T12:35:20.441Z"
   }
@@ -1077,7 +1077,7 @@
     "name": "Ленивый хачапури на сковороде",
     "text": "Очень вкусная и мягкая лепёшка с сыром на сковороде. Готовится всего 10-12 минут.",
     "cooking_time": 10,
-    "image": "recipes/images/87a1ea3d-ea11-4c69-a42d-04d9980a0546.jpg",
+    "image": "recipes/images/e3ee1bf8-e865-40a1-90b8-73bda5116bcc.jpg",
     "author": 2,
     "created_at": "2025-05-11T12:37:20.187Z"
   }
@@ -1089,77 +1089,32 @@
     "name": "Ленивые вареники (за 10 минут)",
     "text": "Не знаете, что приготовить на завтрак — быстрый рецепт ленивых вареников. Минимальное время для приготовления сытного завтрака приветствуется, а узнаваемый вкус порадует любителей блюд из творога.",
     "cooking_time": 10,
-    "image": "recipes/images/06fd32e3-0944-4c5e-a372-30b5639f2139.jpg",
+    "image": "recipes/images/7d3ee294-a5c5-48ba-af44-b08190a03103.jpg",
     "author": 3,
     "created_at": "2025-05-11T12:39:15.384Z"
   }
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 1,
+  "pk": 13,
   "fields": {
-    "recipe": 1,
-    "ingredient": 1,
-    "amount": 200
-  }
-},
-{
-  "model": "recipes.ingredientrecipe",
-  "pk": 2,
-  "fields": {
-    "recipe": 1,
-    "ingredient": 2,
-    "amount": 150
-  }
-},
-{
-  "model": "recipes.ingredientrecipe",
-  "pk": 3,
-  "fields": {
-    "recipe": 1,
-    "ingredient": 5,
-    "amount": 3
-  }
-},
-{
-  "model": "recipes.ingredientrecipe",
-  "pk": 4,
-  "fields": {
-    "recipe": 1,
-    "ingredient": 4,
+    "recipe": 3,
+    "ingredient": 10,
     "amount": 1
   }
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 5,
+  "pk": 14,
   "fields": {
-    "recipe": 1,
-    "ingredient": 6,
-    "amount": 2
-  }
-},
-{
-  "model": "recipes.ingredientrecipe",
-  "pk": 6,
-  "fields": {
-    "recipe": 1,
-    "ingredient": 7,
-    "amount": 3
-  }
-},
-{
-  "model": "recipes.ingredientrecipe",
-  "pk": 7,
-  "fields": {
-    "recipe": 1,
-    "ingredient": 8,
+    "recipe": 3,
+    "ingredient": 14,
     "amount": 1
   }
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 8,
+  "pk": 15,
   "fields": {
     "recipe": 2,
     "ingredient": 9,
@@ -1168,7 +1123,7 @@
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 9,
+  "pk": 16,
   "fields": {
     "recipe": 2,
     "ingredient": 10,
@@ -1177,7 +1132,7 @@
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 10,
+  "pk": 17,
   "fields": {
     "recipe": 2,
     "ingredient": 11,
@@ -1186,19 +1141,64 @@
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 11,
+  "pk": 18,
   "fields": {
-    "recipe": 3,
-    "ingredient": 10,
+    "recipe": 1,
+    "ingredient": 1,
+    "amount": 200
+  }
+},
+{
+  "model": "recipes.ingredientrecipe",
+  "pk": 19,
+  "fields": {
+    "recipe": 1,
+    "ingredient": 2,
+    "amount": 150
+  }
+},
+{
+  "model": "recipes.ingredientrecipe",
+  "pk": 20,
+  "fields": {
+    "recipe": 1,
+    "ingredient": 5,
+    "amount": 3
+  }
+},
+{
+  "model": "recipes.ingredientrecipe",
+  "pk": 21,
+  "fields": {
+    "recipe": 1,
+    "ingredient": 4,
     "amount": 1
   }
 },
 {
   "model": "recipes.ingredientrecipe",
-  "pk": 12,
+  "pk": 22,
   "fields": {
-    "recipe": 3,
-    "ingredient": 14,
+    "recipe": 1,
+    "ingredient": 6,
+    "amount": 2
+  }
+},
+{
+  "model": "recipes.ingredientrecipe",
+  "pk": 23,
+  "fields": {
+    "recipe": 1,
+    "ingredient": 7,
+    "amount": 3
+  }
+},
+{
+  "model": "recipes.ingredientrecipe",
+  "pk": 24,
+  "fields": {
+    "recipe": 1,
+    "ingredient": 8,
     "amount": 1
   }
 },
