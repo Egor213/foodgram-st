@@ -1,5 +1,5 @@
 from recipes.models import ShoopingCart
-from .serializers import RecipeSerializer
+from .recipes.serializers import RecipeSerializer
 from io import BytesIO
 from fpdf import FPDF
 from django.conf import settings
@@ -114,7 +114,13 @@ def generate_recipes_pdf(request):
     return pdf_builder.build()
 
 
-def check_is_related(user, recipe, related_manager_name):
-    if user.is_anonymous:
+def is_related(user, obj, related_manager_name, lookup_field="recipe"):
+    if (
+        not user
+        or not hasattr(user, related_manager_name)
+        or user.is_anonymous
+    ):
         return False
-    return getattr(user, related_manager_name).filter(recipe=recipe).exists()
+    manager = getattr(user, related_manager_name)
+    filter_kwargs = {lookup_field: obj}
+    return manager.filter(**filter_kwargs).exists()

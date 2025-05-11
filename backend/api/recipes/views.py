@@ -9,7 +9,7 @@ from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
-from .services import generate_recipes_pdf
+from api.services import generate_recipes_pdf
 from recipes.models import Recipe, ShoopingCart
 from .serializers import RecipeSerializer, ShoppingCartSeraializer
 from short_urls.models import ShortUrl

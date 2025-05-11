@@ -5,7 +5,7 @@ from rest_framework.validators import UniqueTogetherValidator
 from recipes.models import Recipe, IngredientRecipe, ShoopingCart
 from ingredients.models import Ingredient
 from api.users.serializers import CustomUserSerializer
-from .services import check_is_related
+
 
 
 class IngredientRecipeSerializer(serializers.ModelSerializer):
@@ -76,14 +76,14 @@ class RecipeSerializer(serializers.ModelSerializer):
         return ingredients
 
     def get_is_favorited(self, recipe):
-        return check_is_related(
-            self.context.get("request").user, recipe, "favorites"
-        )
+        from api.services import is_related
+        user = self.context["request"].user
+        return is_related(user, recipe, "favorites", "recipe")
 
     def get_is_in_shopping_cart(self, recipe):
-        return check_is_related(
-            self.context.get("request").user, recipe, "shopping_cart"
-        )
+        from api.services import is_related
+        user = self.context["request"].user
+        return is_related(user, recipe, "shopping_cart", "recipe")
 
     def _save_ingredients(self, recipe, ingredients_data):
         if ingredients_data:
