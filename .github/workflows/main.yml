@@ -25,7 +25,7 @@ jobs:
         run: python -m ruff check backend/
   
   build_backend_and_push_to_docker_hub:
-    name: Push Docker image to DockerHub
+    name: Push Docker image backend to DockerHub
     runs-on: ubuntu-latest
     needs: check_backend_code
     steps:
@@ -42,11 +42,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./backend/
+          file: ./backend/Dockerfile.backend
           push: true
           tags: egor213/foodgram_backend:latest
       
   build_frontend_and_push_to_docker_hub:
-    name: Push Docker image to DockerHub
+    name: Push Docker image frontend to DockerHub
     runs-on: ubuntu-latest
     steps:
       - name: Copy rep
