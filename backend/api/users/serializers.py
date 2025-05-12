@@ -9,22 +9,6 @@ from users.models import Subscription
 User = get_user_model()
 
 
-class CustomCreateUserSerializer(UserCreateSerializer):
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            "password",
-        )
-        read_only_fields = ("id",)
-
-
 class CustomUserSerializer(AvatarSerializer, UserSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
