@@ -4,6 +4,7 @@ from rest_framework.permissions import AllowAny
 
 from ingredients.models import Ingredient
 
+from .filters import IngredientFilter
 from .serializers import IngredientSerializer
 
 
@@ -11,6 +12,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ("name",)
+    filterset_class = IngredientFilter
     permission_classes = (AllowAny,)
     pagination_class = None
