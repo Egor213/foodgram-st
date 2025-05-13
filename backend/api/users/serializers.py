@@ -29,7 +29,7 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
         from api.services import is_related
 
         user = self.context["request"].user
-        return is_related(user, author, "followers", "author")
+        return is_related(user, author, "subscriptions", "author")
 
 
 class CreateSubscribeSerializer(CustomUserSerializer):
