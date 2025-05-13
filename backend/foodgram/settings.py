@@ -121,7 +121,7 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": "core.pagination.CustomPagePaginator",
-    "PAGE_SIZE": 3,
+    "PAGE_SIZE": 6,
 }
 
 AUTH_USER_MODEL = "users.CustomUser"
