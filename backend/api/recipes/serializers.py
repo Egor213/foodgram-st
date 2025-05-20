@@ -77,14 +77,15 @@ class RecipeSerializer(serializers.ModelSerializer):
                 "Ингредиенты не должны повторяться."
             )
 
-        missing_ids = [
-            ingredient_id
-            for ingredient_id in ingredient_ids
-            if not Ingredient.objects.filter(id=ingredient_id).exists()
-        ]
+        existing_ids = set(
+            obj.id for obj in Ingredient.objects.values_list("id", flat=True)
+        )
+
+        missing_ids = set(ingredient_ids) - existing_ids
+
         if missing_ids:
             raise serializers.ValidationError(
-                f"Ингредиенты с id={missing_ids} не существуют."
+                f"Ингредиенты с id {', '.join(map(str, missing_ids))} не найдены."
             )
         return ingredients
 
@@ -117,8 +118,9 @@ class RecipeSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         ingredients_data = validated_data.pop("ingredient_recipes", None)
-        validated_data["author"] = self.context["request"].user
-        recipe = super().create(validated_data)
+        recipe = Recipe.objects.create(
+            author=self.context["request"].user, **validated_data
+        )
         self._save_ingredients(recipe, ingredients_data)
         return recipe
 
