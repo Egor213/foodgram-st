@@ -4,8 +4,6 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from django.conf import settings
-
 
 class CustomUser(AbstractUser):
     username_validator = UnicodeUsernameValidator()
