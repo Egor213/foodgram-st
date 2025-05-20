@@ -10,7 +10,9 @@ User = get_user_model()
 
 class Recipe(models.Model):
     name = models.CharField(
-        verbose_name="Наименование рецепта", max_length=256, db_index=True
+        verbose_name="Наименование рецепта",
+        max_length=settings.MAX_LEN_RECIPE,
+        db_index=True,
     )
     text = models.TextField(verbose_name="Описание")
     cooking_time = models.PositiveSmallIntegerField(
@@ -54,7 +56,7 @@ class Recipe(models.Model):
         ordering = ("-created_at",)
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
 
 class IngredientRecipe(models.Model):
@@ -84,7 +86,7 @@ class IngredientRecipe(models.Model):
         verbose_name_plural = "Ингредиенты в составе рецептов"
 
     def __str__(self):
-        return f"{self.ingredient}"
+        return self.ingredient
 
 
 class FavoriteRecipe(models.Model):
@@ -102,8 +104,10 @@ class FavoriteRecipe(models.Model):
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
 
+    # TypeError at /admin/recipes/favoriterecipe/add/
+    # __str__ returned non-string (type Recipe)
     def __str__(self):
-        return f"{self.recipe}"
+        return str(self.recipe)
 
 
 class ShoopingCart(models.Model):
@@ -122,4 +126,4 @@ class ShoopingCart(models.Model):
         verbose_name_plural = "Рецепты в корзине"
 
     def __str__(self):
-        return f"{self.recipe}"
+        return str(self.recipe)
