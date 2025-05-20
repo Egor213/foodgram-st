@@ -4,28 +4,30 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from django.conf import settings
+
 
 class CustomUser(AbstractUser):
     username_validator = UnicodeUsernameValidator()
     email = models.EmailField(
         verbose_name="Электронная почта",
         unique=True,
-        max_length=254,
+        max_length=settings.MAX_LEN_USER_EMAIL,
         help_text="Адрес электронной почты",
     )
     username = models.CharField(
         verbose_name="Ник пользоваля",
         unique=True,
-        max_length=150,
+        max_length=settings.MAX_LEN_USER_USERNAME,
         validators=[username_validator],
     )
     last_name = models.CharField(
         verbose_name="Фамилия пользоваля",
-        max_length=150,
+        max_length=settings.MAX_LEN_USER_LAST_NAME,
     )
     first_name = models.CharField(
         verbose_name="Имя пользоваля",
-        max_length=150,
+        max_length=settings.MAX_LEN_USER_FIRST_NAME,
     )
     avatar = models.ImageField(
         verbose_name="Аватар",
