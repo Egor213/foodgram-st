@@ -27,7 +27,7 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
         current_user = self.context.get("request").user
         if current_user.is_anonymous:
             return False
-        return current_user.followers.filter(author=author).exists()
+        return current_user.subscriptions.filter(author=author).exists()
 
 
 class CreateSubscribeSerializer(CustomUserSerializer):
