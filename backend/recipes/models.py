@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
+from foodgram.const import MAX_LEN_RECIPE
 from ingredients.models import Ingredient
 
 User = get_user_model()
@@ -11,7 +12,7 @@ User = get_user_model()
 class Recipe(models.Model):
     name = models.CharField(
         verbose_name="Наименование рецепта",
-        max_length=settings.MAX_LEN_RECIPE,
+        max_length=MAX_LEN_RECIPE,
         db_index=True,
     )
     text = models.TextField(verbose_name="Описание")

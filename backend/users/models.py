@@ -4,28 +4,35 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from foodgram.const import (
+    MAX_LEN_USER_EMAIL,
+    MAX_LEN_USER_FIRST_NAME,
+    MAX_LEN_USER_LAST_NAME,
+    MAX_LEN_USER_USERNAME,
+)
+
 
 class CustomUser(AbstractUser):
     username_validator = UnicodeUsernameValidator()
     email = models.EmailField(
         verbose_name="Электронная почта",
         unique=True,
-        max_length=settings.MAX_LEN_USER_EMAIL,
+        max_length=MAX_LEN_USER_EMAIL,
         help_text="Адрес электронной почты",
     )
     username = models.CharField(
         verbose_name="Ник пользоваля",
         unique=True,
-        max_length=settings.MAX_LEN_USER_USERNAME,
+        max_length=MAX_LEN_USER_USERNAME,
         validators=[username_validator],
     )
     last_name = models.CharField(
         verbose_name="Фамилия пользоваля",
-        max_length=settings.MAX_LEN_USER_LAST_NAME,
+        max_length=MAX_LEN_USER_LAST_NAME,
     )
     first_name = models.CharField(
         verbose_name="Имя пользоваля",
-        max_length=settings.MAX_LEN_USER_FIRST_NAME,
+        max_length=MAX_LEN_USER_FIRST_NAME,
     )
     avatar = models.ImageField(
         verbose_name="Аватар",
