@@ -1,12 +1,10 @@
-from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from core.serializers import AvatarSerializer
+from core.user_reference import User
 from users.models import Subscription
-
-User = get_user_model()
 
 
 class CustomUserSerializer(AvatarSerializer, UserSerializer):
