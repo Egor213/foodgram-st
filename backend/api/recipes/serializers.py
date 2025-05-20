@@ -1,3 +1,4 @@
+from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
@@ -87,47 +88,45 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
         return ingredients
 
-    def get_is_favorited(self, recipe):
-        from api.services import is_related
+    def _is_related(self, recipe, relation_name):
+        current_user = self.context.get("request").user
+        if current_user.is_anonymous:
+            return False
+        return (
+            getattr(current_user, relation_name).filter(recipe=recipe).exists()
+        )
 
-        user = self.context["request"].user
-        return is_related(user, recipe, "favorites", "recipe")
+    def get_is_favorited(self, recipe):
+        return self._is_related(recipe, "favorites")
 
     def get_is_in_shopping_cart(self, recipe):
-        from api.services import is_related
-
-        user = self.context["request"].user
-        return is_related(user, recipe, "shopping_cart", "recipe")
+        return self._is_related(recipe, "shopping_cart")
 
     def _save_ingredients(self, recipe, ingredients_data):
-        if ingredients_data:
-            IngredientRecipe.objects.bulk_create(
-                [
-                    IngredientRecipe(
-                        recipe=recipe,
-                        ingredient=Ingredient.objects.get(
-                            id=item["ingredient"]["id"]
-                        ),
-                        amount=item["amount"],
-                    )
-                    for item in ingredients_data
-                ]
-            )
+        IngredientRecipe.objects.bulk_create(
+            [
+                IngredientRecipe(
+                    recipe=recipe,
+                    ingredient=item["ingredient"]["id"],
+                    amount=item["amount"],
+                )
+                for item in ingredients_data
+            ]
+        )
 
+    @transaction.atomic
     def create(self, validated_data):
         ingredients_data = validated_data.pop("ingredient_recipes", None)
-        recipe = Recipe.objects.create(
-            author=self.context["request"].user, **validated_data
-        )
+        validated_data["author"] = self.context["request"].user
+        recipe = super().create(validated_data)
         self._save_ingredients(recipe, ingredients_data)
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         ingredients_data = validated_data.pop("ingredient_recipes", None)
         instance.ingredients.clear()
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        instance.save()
+        instance = super().update(instance, validated_data)
         self._save_ingredients(instance, ingredients_data)
         return instance
 

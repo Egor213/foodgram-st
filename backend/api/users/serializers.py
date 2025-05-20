@@ -24,10 +24,10 @@ class CustomUserSerializer(AvatarSerializer, UserSerializer):
         read_only_fields = ("id", "is_subscribed")
 
     def get_is_subscribed(self, author):
-        from api.services import is_related
-
-        user = self.context["request"].user
-        return is_related(user, author, "subscriptions", "author")
+        current_user = self.context.get("request").user
+        if current_user.is_anonymous:
+            return False
+        return current_user.followers.filter(author=author).exists()
 
 
 class CreateSubscribeSerializer(CustomUserSerializer):
