@@ -78,7 +78,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             )
 
         existing_ids = set(
-            obj.id for obj in Ingredient.objects.values_list("id", flat=True)
+            obj for obj in Ingredient.objects.values_list("id", flat=True)
         )
 
         missing_ids = set(ingredient_ids) - existing_ids
