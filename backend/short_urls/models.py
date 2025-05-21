@@ -1,5 +1,6 @@
 from django.db import models
 
+from foodgram.const import MAX_LEN_SHORT_URLS
 from short_urls.services import generate_short_url
 
 
@@ -9,7 +10,7 @@ class ShortUrl(models.Model):
     )
     short_url = models.SlugField(
         verbose_name="Короткая ссылка",
-        max_length=20,
+        max_length=MAX_LEN_SHORT_URLS,
         unique=True,
         db_index=True,
         blank=True,

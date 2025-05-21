@@ -77,9 +77,7 @@ class RecipeSerializer(serializers.ModelSerializer):
                 "Ингредиенты не должны повторяться."
             )
 
-        existing_ids = set(
-            obj for obj in Ingredient.objects.values_list("id", flat=True)
-        )
+        existing_ids = set(Ingredient.objects.values_list("id", flat=True))
 
         missing_ids = set(ingredient_ids) - existing_ids
 
